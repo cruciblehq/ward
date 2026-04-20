@@ -1,0 +1,11 @@
+# Build output
+dist/
+
+# Test artifacts
+*.test
+coverage.out
+
+# Editor and OS
+.DS_Store
+*.swp
+*~
