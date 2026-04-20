@@ -22,6 +22,51 @@ func NewDecoder(r io.Reader) *Decoder {
 	return &Decoder{r: r}
 }
 
+// Reads a single byte.
+func (d *Decoder) ReadByte() (byte, error) {
+	var b [1]byte
+	if _, err := io.ReadFull(d.r, b[:]); err != nil {
+		return 0, crex.Wrap(ErrDecode, err)
+	}
+	return b[0], nil
+}
+
+// Reads a boolean written as a single byte.
+func (d *Decoder) ReadBool() (bool, error) {
+	var b [1]byte
+	if _, err := io.ReadFull(d.r, b[:]); err != nil {
+		return false, crex.Wrap(ErrDecode, err)
+	}
+	return b[0] != 0, nil
+}
+
+// Reads a little-endian uint16.
+func (d *Decoder) ReadUint16() (uint16, error) {
+	var b [2]byte
+	if _, err := io.ReadFull(d.r, b[:]); err != nil {
+		return 0, crex.Wrap(ErrDecode, err)
+	}
+	return bo.Uint16(b[:]), nil
+}
+
+// Reads a little-endian uint32.
+func (d *Decoder) ReadUint32() (uint32, error) {
+	var b [4]byte
+	if _, err := io.ReadFull(d.r, b[:]); err != nil {
+		return 0, crex.Wrap(ErrDecode, err)
+	}
+	return bo.Uint32(b[:]), nil
+}
+
+// Reads a little-endian uint64.
+func (d *Decoder) ReadUint64() (uint64, error) {
+	var b [8]byte
+	if _, err := io.ReadFull(d.r, b[:]); err != nil {
+		return 0, crex.Wrap(ErrDecode, err)
+	}
+	return bo.Uint64(b[:]), nil
+}
+
 // Reads a string written by Encoder.WriteString.
 //
 // The encoding is a uint32 byte count followed by the raw bytes. An empty
@@ -62,49 +107,4 @@ func (d *Decoder) ReadStrings() ([]string, error) {
 		ss[i] = s
 	}
 	return ss, nil
-}
-
-// Reads a little-endian uint32.
-func (d *Decoder) ReadUint32() (uint32, error) {
-	var b [4]byte
-	if _, err := io.ReadFull(d.r, b[:]); err != nil {
-		return 0, crex.Wrap(ErrDecode, err)
-	}
-	return bo.Uint32(b[:]), nil
-}
-
-// Reads a little-endian uint64.
-func (d *Decoder) ReadUint64() (uint64, error) {
-	var b [8]byte
-	if _, err := io.ReadFull(d.r, b[:]); err != nil {
-		return 0, crex.Wrap(ErrDecode, err)
-	}
-	return bo.Uint64(b[:]), nil
-}
-
-// Reads a boolean written as a single byte.
-func (d *Decoder) ReadBool() (bool, error) {
-	var b [1]byte
-	if _, err := io.ReadFull(d.r, b[:]); err != nil {
-		return false, crex.Wrap(ErrDecode, err)
-	}
-	return b[0] != 0, nil
-}
-
-// Reads a single byte.
-func (d *Decoder) ReadByte() (byte, error) {
-	var b [1]byte
-	if _, err := io.ReadFull(d.r, b[:]); err != nil {
-		return 0, crex.Wrap(ErrDecode, err)
-	}
-	return b[0], nil
-}
-
-// Reads a little-endian uint16.
-func (d *Decoder) ReadUint16() (uint16, error) {
-	var b [2]byte
-	if _, err := io.ReadFull(d.r, b[:]); err != nil {
-		return 0, crex.Wrap(ErrDecode, err)
-	}
-	return bo.Uint16(b[:]), nil
 }
